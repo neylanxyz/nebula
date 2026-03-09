@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { gameAbi } from '@/lib/gameAbi';
 import { GAME_CONTRACT_ADDRESS, NEBULA_NOTE_STORAGE_KEY } from '@/config/contracts';
-import { createNote, encodeNote } from '@neylanxyz/nebula';
-
 const DEPOSIT_EVENT_TOPIC =
   '0xa945e51eec50ab98c161376f0db4cf2aeba3ec92755fe2fcd388bdbbb80ff196';
 
@@ -28,6 +26,7 @@ export function useResolveGame() {
     setError(null);
 
     try {
+      const { createNote, encodeNote } = await import('@neylanxyz/nebula');
       const { noteData, commitment } = await createNote();
 
       const hash = await walletClient.writeContract({
