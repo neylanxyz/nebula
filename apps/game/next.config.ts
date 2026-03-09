@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   transpilePackages: ['@neylanxyz/nebula', '@neylanxyz/nebula-avalanche'],
   webpack: (config, { isServer }) => {
     config.experiments = { ...config.experiments, asyncWebAssembly: true };
+    // pnpm symlinks: resolve packages via their symlinked path, not the real path
+    config.resolve.symlinks = false;
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
