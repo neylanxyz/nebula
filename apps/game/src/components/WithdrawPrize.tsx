@@ -116,53 +116,48 @@ export function WithdrawPrize({
         <p className="text-sm text-red-400">{error.message.slice(0, 200)}</p>
       )}
 
-      {!hasNote && gameResolved && (
-        <div className="space-y-3">
-          <p className="text-sm text-yellow-400">
-            Nota não encontrada neste browser. Importe a nota gerada no resolve:
-          </p>
-
-          {!showImport ? (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="text-sm text-gray-400">
+            Nota ZK{' '}
+            {hasNote && (
+              <span className="ml-1 text-xs text-emerald-400">(carregada)</span>
+            )}
+          </label>
+          {hasNote && (
             <button
-              onClick={() => setShowImport(true)}
-              className="w-full rounded-lg border border-yellow-600 px-4 py-2 text-sm text-yellow-400 transition hover:bg-yellow-900/20"
+              onClick={() => setShowImport((v) => !v)}
+              className="text-xs text-gray-500 underline hover:text-gray-300"
             >
-              Importar Nota
+              {showImport ? 'Cancelar' : 'Substituir'}
             </button>
-          ) : (
-            <div className="space-y-2">
-              <textarea
-                value={importNote}
-                onChange={(e) => setImportNote(e.target.value)}
-                placeholder="Cole a nota aqui (string base64)..."
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 font-mono text-xs text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none"
-                rows={3}
-              />
-              <div className="flex gap-2">
-                <button
-                  onClick={handleImportNote}
-                  disabled={!importNote.trim()}
-                  className="flex-1 rounded-lg bg-yellow-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-yellow-500 disabled:opacity-50"
-                >
-                  Salvar Nota
-                </button>
-                <button
-                  onClick={() => { setShowImport(false); setImportNote(''); }}
-                  className="rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-400 transition hover:border-gray-500"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
           )}
         </div>
-      )}
 
-      {hasNote && (
-        <p className="text-xs text-gray-500">
-          Nota carregada no browser.
-        </p>
-      )}
+        {(!hasNote || showImport) && (
+          <div className="space-y-2">
+            {!hasNote && (
+              <p className="text-xs text-yellow-400">
+                Nota não encontrada neste browser. Cole a nota gerada no resolve.
+              </p>
+            )}
+            <textarea
+              value={importNote}
+              onChange={(e) => setImportNote(e.target.value)}
+              placeholder="Cole a nota aqui (string base64)..."
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 font-mono text-xs text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none"
+              rows={3}
+            />
+            <button
+              onClick={handleImportNote}
+              disabled={!importNote.trim()}
+              className="w-full rounded-lg bg-yellow-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-yellow-500 disabled:opacity-50"
+            >
+              Salvar Nota
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
