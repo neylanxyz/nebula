@@ -1,0 +1,111 @@
+export const gameAbi = [
+  {
+    inputs: [
+      { internalType: 'address', name: '_nebula', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: 'player', type: 'address' },
+    ],
+    name: 'PlayerEntered',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'bytes32', name: 'commitment', type: 'bytes32' },
+    ],
+    name: 'PrizeDeposited',
+    type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'ENTRY_FEE',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'NEBULA_DENOM',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'NEBULA_FEE',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'NEBULA_TOTAL',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'currentBalance',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'emergencyWithdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'enter',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'gameResolved',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'nebula',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'players',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: '_commitment', type: 'bytes32' },
+    ],
+    name: 'resolveGameAndDeposit',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const;
