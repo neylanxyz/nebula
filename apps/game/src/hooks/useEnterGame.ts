@@ -2,9 +2,9 @@
 
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { gameAbi } from '@/lib/gameAbi';
-import { GAME_CONTRACT_ADDRESS } from '@/config/contracts';
+import type { Address } from 'viem';
 
-export function useEnterGame() {
+export function useEnterGame(gameAddress: Address) {
   const { writeContract, data: txHash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
@@ -12,19 +12,12 @@ export function useEnterGame() {
 
   function enter(entryFee: bigint) {
     writeContract({
-      address: GAME_CONTRACT_ADDRESS,
+      address: gameAddress,
       abi: gameAbi,
       functionName: 'enter',
       value: entryFee,
     });
   }
 
-  return {
-    enter,
-    txHash,
-    isPending,
-    isConfirming,
-    isSuccess,
-    error,
-  };
+  return { enter, txHash, isPending, isConfirming, isSuccess, error };
 }

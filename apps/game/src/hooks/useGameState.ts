@@ -2,15 +2,11 @@
 
 import { useReadContracts } from 'wagmi';
 import { gameAbi } from '@/lib/gameAbi';
-import { GAME_CONTRACT_ADDRESS } from '@/config/contracts';
 import type { Address } from 'viem';
 
-const contract = {
-  address: GAME_CONTRACT_ADDRESS,
-  abi: gameAbi,
-} as const;
+export function useGameState(gameAddress: Address) {
+  const contract = { address: gameAddress, abi: gameAbi } as const;
 
-export function useGameState() {
   const { data, isLoading, refetch } = useReadContracts({
     contracts: [
       { ...contract, functionName: 'gameResolved' },

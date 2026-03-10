@@ -8,14 +8,19 @@ import { useGameEvents } from '@/hooks/useGameEvents';
 import { EnterButton } from './EnterButton';
 import { GameStatus } from './GameStatus';
 import { useCallback } from 'react';
+import type { Address } from 'viem';
 
 function shortenAddress(addr: string) {
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 }
 
-export function GameLobby() {
+interface GameLobbyProps {
+  gameAddress: Address;
+}
+
+export function GameLobby({ gameAddress }: GameLobbyProps) {
   const { isConnected, address } = useAccount();
-  const gameState = useGameState();
+  const gameState = useGameState(gameAddress);
   const {
     gameResolved,
     currentBalance,
@@ -27,11 +32,8 @@ export function GameLobby() {
     refetch,
   } = gameState;
 
-  const handleUpdate = useCallback(() => {
-    refetch();
-  }, [refetch]);
-
-  useGameEvents(handleUpdate);
+  const handleUpdate = useCallback(() => refetch(), [refetch]);
+  useGameEvents(handleUpdate, gameAddress);
 
   const alreadyEntered =
     address &&
@@ -46,6 +48,9 @@ export function GameLobby() {
         <h1 className="text-3xl font-bold">Nebula Privacy Tournament</h1>
         <p className="mt-2 text-gray-400">
           Torneio com prêmio distribuído de forma privada via ZK proofs
+        </p>
+        <p className="mt-1 font-mono text-xs text-gray-600">
+          {gameAddress}
         </p>
       </div>
 
@@ -75,22 +80,14 @@ export function GameLobby() {
 
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
-            <span
-              className={`h-2 w-2 rounded-full ${player1 ? 'bg-emerald-500' : 'bg-gray-600'}`}
-            />
+            <span className={`h-2 w-2 rounded-full ${player1 ? 'bg-emerald-500' : 'bg-gray-600'}`} />
             <span className="text-gray-400">Player 1:</span>
-            <span className="font-mono">
-              {player1 ? shortenAddress(player1) : 'Vazio'}
-            </span>
+            <span className="font-mono">{player1 ? shortenAddress(player1) : 'Vazio'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span
-              className={`h-2 w-2 rounded-full ${player2 ? 'bg-emerald-500' : 'bg-gray-600'}`}
-            />
+            <span className={`h-2 w-2 rounded-full ${player2 ? 'bg-emerald-500' : 'bg-gray-600'}`} />
             <span className="text-gray-400">Player 2:</span>
-            <span className="font-mono">
-              {player2 ? shortenAddress(player2) : 'Vazio'}
-            </span>
+            <span className="font-mono">{player2 ? shortenAddress(player2) : 'Vazio'}</span>
           </div>
         </div>
 
@@ -99,24 +96,21 @@ export function GameLobby() {
             Jogo resolvido — prêmio depositado no Nebula Pool
           </div>
         )}
-
         {alreadyEntered && !gameResolved && !isFull && (
           <div className="rounded-lg bg-blue-900/30 p-3 text-center text-sm text-blue-400">
-            Você já entrou no torneio. Aguardando segundo jogador...
+            Você já entrou. Aguardando segundo jogador...
           </div>
         )}
-
         {alreadyEntered && !gameResolved && isFull && (
           <div className="rounded-lg bg-purple-900/30 p-3 text-center text-sm text-purple-400">
-            Jogo lotado! Aguardando o owner resolver o jogo...
+            Jogo lotado! Aguardando o owner resolver...
           </div>
         )}
       </div>
 
       {isConnected && !alreadyEntered && (
-        <EnterButton entryFee={entryFee} disabled={!canEnter} />
+        <EnterButton gameAddress={gameAddress} entryFee={entryFee} disabled={!canEnter} />
       )}
-
       {!isConnected && (
         <p className="text-center text-sm text-gray-500">
           Conecte sua wallet para participar

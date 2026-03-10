@@ -2,23 +2,23 @@
 
 import { useWatchContractEvent } from 'wagmi';
 import { gameAbi } from '@/lib/gameAbi';
-import { GAME_CONTRACT_ADDRESS } from '@/config/contracts';
 import { useCallback } from 'react';
+import type { Address } from 'viem';
 
-export function useGameEvents(onUpdate: () => void) {
+export function useGameEvents(onUpdate: () => void, gameAddress: Address) {
   const handleEvent = useCallback(() => {
     onUpdate();
   }, [onUpdate]);
 
   useWatchContractEvent({
-    address: GAME_CONTRACT_ADDRESS,
+    address: gameAddress,
     abi: gameAbi,
     eventName: 'PlayerEntered',
     onLogs: handleEvent,
   });
 
   useWatchContractEvent({
-    address: GAME_CONTRACT_ADDRESS,
+    address: gameAddress,
     abi: gameAbi,
     eventName: 'PrizeDeposited',
     onLogs: handleEvent,

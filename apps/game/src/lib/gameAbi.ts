@@ -2,10 +2,16 @@ export const gameAbi = [
   {
     inputs: [
       { internalType: 'address', name: '_nebula', type: 'address' },
+      { internalType: 'address', name: '_owner', type: 'address' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
+  { inputs: [], name: 'GameAlreadyResolved', type: 'error' },
+  { inputs: [], name: 'GameFull', type: 'error' },
+  { inputs: [], name: 'NotOwner', type: 'error' },
+  { inputs: [], name: 'WrongEntryFee', type: 'error' },
+  { inputs: [], name: 'WrongNebulaFee', type: 'error' },
   {
     anonymous: false,
     inputs: [
@@ -100,12 +106,62 @@ export const gameAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      { internalType: 'bytes32', name: '_commitment', type: 'bytes32' },
-    ],
+    inputs: [{ internalType: 'bytes32', name: '_commitment', type: 'bytes32' }],
     name: 'resolveGameAndDeposit',
     outputs: [],
     stateMutability: 'payable',
+    type: 'function',
+  },
+] as const;
+
+export const gameFactoryAbi = [
+  {
+    inputs: [{ internalType: 'address', name: '_nebula', type: 'address' }],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: 'game', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'creator', type: 'address' },
+    ],
+    name: 'GameCreated',
+    type: 'event',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'allGames',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'createGame',
+    outputs: [{ internalType: 'address', name: 'game', type: 'address' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getGames',
+    outputs: [{ internalType: 'address[]', name: '', type: 'address[]' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'gamesCount',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'nebula',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
     type: 'function',
   },
 ] as const;

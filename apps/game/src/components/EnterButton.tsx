@@ -2,14 +2,16 @@
 
 import { useEnterGame } from '@/hooks/useEnterGame';
 import { formatEther } from 'viem';
+import type { Address } from 'viem';
 
 interface EnterButtonProps {
+  gameAddress: Address;
   entryFee: bigint | undefined;
   disabled: boolean;
 }
 
-export function EnterButton({ entryFee, disabled }: EnterButtonProps) {
-  const { enter, isPending, isConfirming, isSuccess, error } = useEnterGame();
+export function EnterButton({ gameAddress, entryFee, disabled }: EnterButtonProps) {
+  const { enter, isPending, isConfirming, isSuccess, error } = useEnterGame(gameAddress);
 
   const feeDisplay = entryFee ? formatEther(entryFee) : '...';
 
@@ -26,10 +28,7 @@ export function EnterButton({ entryFee, disabled }: EnterButtonProps) {
             ? 'Processando...'
             : `Entrar no Torneio — ${feeDisplay} AVAX`}
       </button>
-
-      {isSuccess && (
-        <p className="text-sm text-emerald-400">Entrada confirmada!</p>
-      )}
+      {isSuccess && <p className="text-sm text-emerald-400">Entrada confirmada!</p>}
       {error && (
         <p className="text-sm text-red-400">
           {(error as Error).message?.slice(0, 100)}

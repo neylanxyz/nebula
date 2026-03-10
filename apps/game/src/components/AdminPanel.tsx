@@ -7,9 +7,14 @@ import { GameStatus } from './GameStatus';
 import { ResolveGame } from './ResolveGame';
 import { WithdrawPrize } from './WithdrawPrize';
 import { useCallback } from 'react';
+import type { Address } from 'viem';
 
-export function AdminPanel() {
-  const gameState = useGameState();
+interface AdminPanelProps {
+  gameAddress: Address;
+}
+
+export function AdminPanel({ gameAddress }: AdminPanelProps) {
+  const gameState = useGameState(gameAddress);
   const {
     gameResolved,
     currentBalance,
@@ -21,17 +26,14 @@ export function AdminPanel() {
     refetch,
   } = gameState;
 
-  const handleUpdate = useCallback(() => {
-    refetch();
-  }, [refetch]);
-
-  useGameEvents(handleUpdate);
+  const handleUpdate = useCallback(() => refetch(), [refetch]);
+  useGameEvents(handleUpdate, gameAddress);
 
   return (
     <div className="mx-auto max-w-lg space-y-8">
       <div className="text-center">
         <h1 className="text-3xl font-bold">Admin Panel</h1>
-        <p className="mt-2 text-gray-400">Gerenciar o torneio como owner</p>
+        <p className="mt-1 font-mono text-xs text-gray-600">{gameAddress}</p>
       </div>
 
       <GameStatus playerCount={playerCount} gameResolved={gameResolved} />
@@ -46,9 +48,7 @@ export function AdminPanel() {
           <div>
             <span className="text-gray-400">Balance</span>
             <p className="font-mono">
-              {currentBalance !== undefined
-                ? `${formatEther(currentBalance)} AVAX`
-                : '...'}
+              {currentBalance !== undefined ? `${formatEther(currentBalance)} AVAX` : '...'}
             </p>
           </div>
           <div>
@@ -67,6 +67,7 @@ export function AdminPanel() {
       </div>
 
       <ResolveGame
+        gameAddress={gameAddress}
         isFull={isFull}
         gameResolved={gameResolved}
         nebulaFee={nebulaFee}

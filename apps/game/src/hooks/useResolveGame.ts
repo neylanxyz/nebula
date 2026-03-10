@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { gameAbi } from '@/lib/gameAbi';
-import { GAME_CONTRACT_ADDRESS, NEBULA_NOTE_STORAGE_KEY } from '@/config/contracts';
-const DEPOSIT_EVENT_TOPIC =
-  '0xa945e51eec50ab98c161376f0db4cf2aeba3ec92755fe2fcd388bdbbb80ff196';
+import { NEBULA_NOTE_STORAGE_KEY } from '@/config/contracts';
+import type { Address } from 'viem';
 
-export function useResolveGame() {
+// keccak256("Deposit(bytes32,uint32)") — topic0 emitido pelo NebulaPrivatePool (0x254d...)
+const DEPOSIT_EVENT_TOPIC =
+  '0x84fc9eb8cd0a782a1d1734fbeed616bd0ef775f8b9bd437636b62d634fe4baf3';
+
+export function useResolveGame(gameAddress: Address) {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [note, setNote] = useState<string | null>(null);
@@ -30,7 +33,7 @@ export function useResolveGame() {
       const { noteData, commitment } = await createNote();
 
       const hash = await walletClient.writeContract({
-        address: GAME_CONTRACT_ADDRESS,
+        address: gameAddress,
         abi: gameAbi,
         functionName: 'resolveGameAndDeposit',
         args: [commitment],

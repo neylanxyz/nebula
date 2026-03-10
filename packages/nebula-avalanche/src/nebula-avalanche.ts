@@ -81,7 +81,8 @@ export class NebulaAvalanche {
 
     let leafIndex = nextIndex;
     for (const log of receipt.logs) {
-      if (log.topics[0] === '0xa945e51eec50ab98c161376f0db4cf2aeba3ec92755fe2fcd388bdbbb80ff196') {
+      // keccak256("Deposit(bytes32,uint32)") — topic0 emitido pelo NebulaPrivatePool
+      if (log.topics[0] === '0x84fc9eb8cd0a782a1d1734fbeed616bd0ef775f8b9bd437636b62d634fe4baf3') {
         if (log.data && log.data.length >= 66) {
           leafIndex = parseInt(log.data.slice(2, 66), 16);
         }
@@ -110,10 +111,11 @@ export class NebulaAvalanche {
   ): Promise<WithdrawResult> {
     const noteData = decodeNote(note);
 
-    const deposits = await fetchDeposits(
+    // Fetch all deposits from indexer (no targetCount limit when using indexer)
+    const allDeposits = await fetchDeposits(
       this.rpcUrl,
       this.contractAddress,
-      noteData.leafIndex + 1,
+      Number.MAX_SAFE_INTEGER,
       {
         startBlock: this.startBlock,
         onProgress: options?.onFetchProgress,
@@ -122,6 +124,28 @@ export class NebulaAvalanche {
       },
     );
 
+    // Auto-correct leafIndex: find the actual index of this note's commitment.
+    // Notes generated before the topic fix may have leafIndex=0 incorrectly.
+    const poseidon = await getPoseidon();
+    const commitmentBigInt = poseidon([noteData.secret, noteData.nullifier]);
+    const commitmentHex = fieldToBytes32(poseidon, commitmentBigInt).toLowerCase();
+
+    const match = allDeposits.find(
+      (d) => d.commitment.toLowerCase() === commitmentHex,
+    );
+    console.log('[nebula-avalanche] withdraw debug:', {
+      noteLeafIndex: noteData.leafIndex,
+      commitmentHex,
+      allDepositsCount: allDeposits.length,
+      matchFound: !!match,
+      matchLeafIndex: match?.leafIndex,
+    });
+    if (match && match.leafIndex !== noteData.leafIndex) {
+      noteData.leafIndex = match.leafIndex;
+      note = encodeNote(noteData);
+    }
+
+    const deposits = allDeposits.filter((d) => d.leafIndex <= noteData.leafIndex);
     const commitments = deposits.map((d) => d.commitment);
 
     const proofInputs = await computeProofInputs(commitments, note);
