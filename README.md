@@ -48,9 +48,9 @@ Player 2 ──┼──[enter(0.5 AVAX)]──► TournamentGame
 
 ## Contracts (Avalanche Fuji)
 
-| Contract | Address |
-|---|---|
-| `NebulaPrivatePool` | `0x254d1290a8f977dc2babbbf979cc86a7ac4a83ca` |
+| Contract                | Address                                      |
+| ----------------------- | -------------------------------------------- |
+| `NebulaPrivatePool`     | `0x254d1290a8f977dc2babbbf979cc86a7ac4a83ca` |
 | `TournamentGameFactory` | `0x457a153E3B49515CE39E4743D905Be1C70FE2AFb` |
 
 ### TournamentGame
@@ -87,11 +87,13 @@ function gamesCount() external view returns (uint256);
 Chain-agnostic. Handles note generation, ZK proof, Merkle tree.
 
 **Install:**
+
 ```bash
 pnpm add @neylanxyz/nebula
 ```
 
 **Peer deps:**
+
 ```bash
 pnpm add @aztec/bb.js @noir-lang/noir_js @noir-lang/acvm_js @noir-lang/noirc_abi viem
 ```
@@ -99,9 +101,9 @@ pnpm add @aztec/bb.js @noir-lang/noir_js @noir-lang/acvm_js @noir-lang/noirc_abi
 #### Main class: `Nebula`
 
 ```ts
-import { Nebula } from '@neylanxyz/nebula';
+import { Nebula } from "@neylanxyz/nebula";
 
-const nebula = new Nebula({ rpcUrl: 'https://rpc.sepolia.mantle.xyz' });
+const nebula = new Nebula({ rpcUrl: "https://rpc.url" });
 
 // Deposit — returns note (save it!)
 const { note, txHash, leafIndex } = await nebula.deposit(walletClient);
@@ -120,14 +122,14 @@ const spent = await nebula.isNoteSpent(note);
 
 ```ts
 import {
-  createNote,        // Generate random { noteData, commitment }
-  encodeNote,        // NoteData → base64 string
-  decodeNote,        // base64 string → NoteData
-  computeProofInputs,// Build Merkle tree + format ZK inputs
-  generateProof,     // Run Noir circuit → { proof, publicInputs }
-  getPoseidon,       // Get Poseidon BN254 singleton
-  fieldToBytes32,    // Field element → 0x... bytes32
-} from '@neylanxyz/nebula';
+  createNote, // Generate random { noteData, commitment }
+  encodeNote, // NoteData → base64 string
+  decodeNote, // base64 string → NoteData
+  computeProofInputs, // Build Merkle tree + format ZK inputs
+  generateProof, // Run Noir circuit → { proof, publicInputs }
+  getPoseidon, // Get Poseidon BN254 singleton
+  fieldToBytes32, // Field element → 0x... bytes32
+} from "@neylanxyz/nebula";
 ```
 
 #### Types
@@ -140,7 +142,7 @@ interface NoteData {
 }
 
 interface DepositResult {
-  note: string;          // base64 — MUST be saved by user
+  note: string; // base64 — MUST be saved by user
   txHash: Hash;
   commitment: `0x${string}`;
   leafIndex: number;
@@ -163,13 +165,13 @@ interface WithdrawOptions {
 
 #### Errors
 
-| Error | When |
-|---|---|
-| `InvalidNoteError` | Note string is corrupted or cannot be decoded |
-| `CommitmentMismatchError` | Note's commitment doesn't match on-chain data at `leafIndex` |
-| `InsufficientDepositsError` | Not enough deposits found to rebuild the Merkle tree |
-| `ProofGenerationError` | Noir circuit proof generation failed |
-| `AbortedError` | Operation cancelled via `AbortSignal` |
+| Error                       | When                                                         |
+| --------------------------- | ------------------------------------------------------------ |
+| `InvalidNoteError`          | Note string is corrupted or cannot be decoded                |
+| `CommitmentMismatchError`   | Note's commitment doesn't match on-chain data at `leafIndex` |
+| `InsufficientDepositsError` | Not enough deposits found to rebuild the Merkle tree         |
+| `ProofGenerationError`      | Noir circuit proof generation failed                         |
+| `AbortedError`              | Operation cancelled via `AbortSignal`                        |
 
 ---
 
@@ -178,16 +180,17 @@ interface WithdrawOptions {
 Wraps `@neylanxyz/nebula` with Avalanche Fuji defaults and indexer support.
 
 **Install:**
+
 ```bash
 pnpm add @neylanxyz/nebula-avalanche
 ```
 
 ```ts
-import { NebulaAvalanche } from '@neylanxyz/nebula-avalanche';
+import { NebulaAvalanche } from "@neylanxyz/nebula-avalanche";
 
 const nebula = new NebulaAvalanche({
-  rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
-  indexerUrl: 'http://localhost:42069', // optional — avoids eth_getLogs rate limits
+  rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
+  indexerUrl: "http://localhost:42069", // optional — avoids eth_getLogs rate limits
 });
 
 // Deposit
@@ -205,13 +208,14 @@ await nebula.isBlacklisted(address);
 ```
 
 **Config:**
+
 ```ts
 interface NebulaAvalancheConfig {
   rpcUrl: string;
-  contractAddress?: Address;  // defaults to NebulaPrivatePool on Fuji
-  startBlock?: bigint;        // defaults to deployment block 52499039
+  contractAddress?: Address; // defaults to NebulaPrivatePool on Fuji
+  startBlock?: bigint; // defaults to deployment block 52499039
   verifierAddress?: Address;
-  indexerUrl?: string;        // Ponder indexer URL for fast deposit fetching
+  indexerUrl?: string; // Ponder indexer URL for fast deposit fetching
 }
 ```
 
@@ -227,6 +231,7 @@ interface NebulaAvalancheConfig {
 Indexes `Deposit` and `Withdrawal` events from `NebulaPrivatePool`. Exposes a REST API consumed by the SDK during withdraw.
 
 **Start:**
+
 ```bash
 cp apps/indexer/.env.local.example apps/indexer/.env.local
 # Set AVALANCHE_RPC_URL (Ankr recommended: https://rpc.ankr.com/avalanche_fuji)
@@ -237,13 +242,14 @@ Runs on `http://localhost:42069` by default.
 
 **Endpoints:**
 
-| Endpoint | Description |
-|---|---|
+| Endpoint        | Description                        |
+| --------------- | ---------------------------------- |
 | `GET /deposits` | All deposits sorted by `leafIndex` |
-| `GET /graphql` | GraphQL API |
-| `GET /sql/*` | Direct SQL access |
+| `GET /graphql`  | GraphQL API                        |
+| `GET /sql/*`    | Direct SQL access                  |
 
 **`GET /deposits` response:**
+
 ```json
 {
   "deposits": [
@@ -254,6 +260,7 @@ Runs on `http://localhost:42069` by default.
 ```
 
 **Ponder config highlights:**
+
 - Chain: Avalanche Fuji (`chainId: 43113`)
 - `ethGetLogsBlockRange: 2048` — respects public RPC limits
 - Start block: `52499039` (NebulaPrivatePool deployment)
@@ -263,6 +270,7 @@ Runs on `http://localhost:42069` by default.
 ### `apps/game` — Tournament Frontend (Next.js)
 
 **Start:**
+
 ```bash
 cp apps/game/.env.example apps/game/.env.local
 # Fill in NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
@@ -271,6 +279,7 @@ pnpm --filter game dev
 ```
 
 **Environment variables:**
+
 ```env
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_id_here
 NEXT_PUBLIC_INDEXER_URL=http://localhost:42069
@@ -278,15 +287,15 @@ NEXT_PUBLIC_INDEXER_URL=http://localhost:42069
 
 **Key hooks:**
 
-| Hook | Description |
-|---|---|
-| `useGameList()` | Reads all games from the factory |
-| `useCreateGame()` | Calls `factory.createGame()` |
-| `useGameState(gameAddress)` | Reads game state (players, balance, resolved) |
-| `useEnterGame(gameAddress)` | Calls `game.enter()` with `0.5 AVAX` |
+| Hook                          | Description                                      |
+| ----------------------------- | ------------------------------------------------ |
+| `useGameList()`               | Reads all games from the factory                 |
+| `useCreateGame()`             | Calls `factory.createGame()`                     |
+| `useGameState(gameAddress)`   | Reads game state (players, balance, resolved)    |
+| `useEnterGame(gameAddress)`   | Calls `game.enter()` with `0.5 AVAX`             |
 | `useResolveGame(gameAddress)` | Generates note + calls `resolveGameAndDeposit()` |
-| `useWithdrawPrize()` | Full ZK withdraw flow via `NebulaAvalanche` |
-| `useIsOwner(gameAddress)` | Checks if connected wallet is game owner |
+| `useWithdrawPrize()`          | Full ZK withdraw flow via `NebulaAvalanche`      |
+| `useIsOwner(gameAddress)`     | Checks if connected wallet is game owner         |
 
 ---
 

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 import {
   Nebula,
   createNote,
@@ -14,10 +14,10 @@ import {
   NEBULA_POOL_ABI,
   NebulaError,
   InvalidNoteError,
-} from '../src/index.js';
+} from "../src/index.js";
 
-describe('integration: barrel exports', () => {
-  it('should export all public types and classes', () => {
+describe("integration: barrel exports", () => {
+  it("should export all public types and classes", () => {
     expect(Nebula).toBeDefined();
     expect(createNote).toBeDefined();
     expect(encodeNote).toBeDefined();
@@ -35,17 +35,17 @@ describe('integration: barrel exports', () => {
   });
 });
 
-describe('integration: full note lifecycle (no chain)', () => {
-  it('should create, encode, decode, and compute proof inputs', async () => {
+describe("integration: full note lifecycle (no chain)", () => {
+  it("should create, encode, decode, and compute proof inputs", async () => {
     // 1. Create note
     const { noteData, commitment } = await createNote();
-    expect(noteData.secret).toBeTypeOf('bigint');
+    expect(noteData.secret).toBeTypeOf("bigint");
     expect(commitment).toMatch(/^0x[0-9a-f]{64}$/);
 
     // 2. Assign leafIndex and encode
     noteData.leafIndex = 0;
     const note = encodeNote(noteData);
-    expect(typeof note).toBe('string');
+    expect(typeof note).toBe("string");
 
     // 3. Decode
     const decoded = decodeNote(note);
@@ -63,18 +63,20 @@ describe('integration: full note lifecycle (no chain)', () => {
   });
 });
 
-describe('integration: Nebula class instantiation', () => {
-  it('should create a Nebula instance with defaults', () => {
-    const nebula = new Nebula({ rpcUrl: 'https://rpc.sepolia.mantle.xyz' });
+describe("integration: Nebula class instantiation", () => {
+  it("should create a Nebula instance with defaults", () => {
+    const nebula = new Nebula({
+      rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
+    });
     expect(nebula).toBeInstanceOf(Nebula);
     expect(nebula.getReader()).toBeDefined();
     expect(nebula.getWriter()).toBeDefined();
   });
 
-  it('should accept custom contract address', () => {
+  it("should accept custom contract address", () => {
     const nebula = new Nebula({
-      rpcUrl: 'https://rpc.sepolia.mantle.xyz',
-      contractAddress: '0x1234567890123456789012345678901234567890',
+      rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
+      contractAddress: "0x1234567890123456789012345678901234567890",
     });
     expect(nebula).toBeInstanceOf(Nebula);
   });

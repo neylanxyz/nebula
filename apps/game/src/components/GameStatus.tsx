@@ -6,9 +6,9 @@ interface GameStatusProps {
 }
 
 const steps = [
-  { label: 'Aguardando jogadores', key: 'waiting' },
-  { label: 'Jogo lotado', key: 'full' },
-  { label: 'Jogo resolvido', key: 'resolved' },
+  { label: 'Waiting', sublabel: 'for players', key: 'waiting' },
+  { label: 'Full', sublabel: 'game full', key: 'full' },
+  { label: 'Resolved', sublabel: 'prize sent', key: 'resolved' },
 ] as const;
 
 export function GameStatus({ playerCount, gameResolved }: GameStatusProps) {
@@ -17,31 +17,40 @@ export function GameStatus({ playerCount, gameResolved }: GameStatusProps) {
   if (gameResolved) currentStep = 2;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-start justify-between gap-1">
       {steps.map((step, i) => (
-        <div key={step.key} className="flex items-center gap-2">
-          <div
-            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
-              i <= currentStep
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-700 text-gray-400'
-            }`}
-          >
-            {i + 1}
-          </div>
-          <span
-            className={`text-sm ${
-              i <= currentStep ? 'text-white' : 'text-gray-500'
-            }`}
-          >
-            {step.label}
-          </span>
-          {i < steps.length - 1 && (
+        <div key={step.key} className="flex flex-1 items-start">
+          <div className="flex flex-col items-center gap-1.5 min-w-0 flex-1">
             <div
-              className={`h-px w-8 ${
-                i < currentStep ? 'bg-emerald-500' : 'bg-gray-700'
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${
+                i < currentStep
+                  ? 'bg-emerald-500 text-white'
+                  : i === currentStep
+                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/50'
+                    : 'bg-gray-800 text-gray-600'
               }`}
-            />
+            >
+              {i < currentStep ? (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                i + 1
+              )}
+            </div>
+            <div className="text-center">
+              <p className={`text-xs font-medium leading-tight ${i <= currentStep ? 'text-white' : 'text-gray-600'}`}>
+                {step.label}
+              </p>
+              <p className={`text-[10px] leading-tight ${i <= currentStep ? 'text-gray-400' : 'text-gray-700'}`}>
+                {step.sublabel}
+              </p>
+            </div>
+          </div>
+          {i < steps.length - 1 && (
+            <div className="mx-1 mt-4 flex-1 shrink-0" style={{ minWidth: '12px' }}>
+              <div className={`h-px w-full ${i < currentStep ? 'bg-emerald-500' : 'bg-gray-700'}`} />
+            </div>
           )}
         </div>
       ))}

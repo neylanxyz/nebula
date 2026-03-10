@@ -1,26 +1,26 @@
-import type { Address, Hash, WalletClient } from 'viem';
+import type { Address, Hash, WalletClient } from "viem";
 import type {
   NebulaConfig,
   DepositResult,
   WithdrawResult,
   PoolInfo,
   WithdrawOptions,
-} from './types.js';
-import { NEBULA_CONTRACT_ADDRESS, NEBULA_START_BLOCK } from './constants.js';
-import { NebulaReader } from './contract/reader.js';
-import { NebulaWriter } from './contract/writer.js';
-import { fetchDeposits } from './contract/events.js';
-import { createNote, encodeNote, decodeNote } from './core/note.js';
-import { computeProofInputs } from './core/compute.js';
-import { generateProof } from './core/proof.js';
-import { getPoseidon, fieldToBytes32 } from './core/poseidon.js';
+} from "./types.js";
+import { NEBULA_CONTRACT_ADDRESS, NEBULA_START_BLOCK } from "./constants.js";
+import { NebulaReader } from "./contract/reader.js";
+import { NebulaWriter } from "./contract/writer.js";
+import { fetchDeposits } from "./contract/events.js";
+import { createNote, encodeNote, decodeNote } from "./core/note.js";
+import { computeProofInputs } from "./core/compute.js";
+import { generateProof } from "./core/proof.js";
+import { getPoseidon, fieldToBytes32 } from "./core/poseidon.js";
 
 /**
  * Main facade class that orchestrates deposit and withdraw end-to-end.
  *
  * @example
  * ```ts
- * const nebula = new Nebula({ rpcUrl: 'https://rpc.sepolia.mantle.xyz' });
+ * const nebula = new Nebula({ rpcUrl: 'https://rpc.sepolia.fujitestnet.xyz' });
  *
  * // Deposit
  * const { note, txHash } = await nebula.deposit(walletClient);
@@ -59,7 +59,8 @@ export class Nebula {
    */
   async deposit(walletClient: WalletClient): Promise<DepositResult> {
     // 1. Get pool info for denomination + fee
-    const { denomination, protocolFee, nextIndex } = await this.reader.getPoolInfo();
+    const { denomination, protocolFee, nextIndex } =
+      await this.reader.getPoolInfo();
     const value = denomination + protocolFee;
 
     // 2. Generate note and commitment
@@ -75,7 +76,10 @@ export class Nebula {
     // Extract leafIndex from Deposit event log
     let leafIndex = nextIndex;
     for (const log of receipt.logs) {
-      if (log.topics[0] === '0xa945e51eec50ab98c161376f0db4cf2aeba3ec92755fe2fcd388bdbbb80ff196') {
+      if (
+        log.topics[0] ===
+        "0xa945e51eec50ab98c161376f0db4cf2aeba3ec92755fe2fcd388bdbbb80ff196"
+      ) {
         // Deposit event topic
         if (log.data && log.data.length >= 66) {
           leafIndex = parseInt(log.data.slice(2, 66), 16);
