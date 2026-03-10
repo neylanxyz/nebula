@@ -83,7 +83,7 @@ function GameCard({ gameAddress, selected, onSelect }: GameCardProps) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/admin?game=${gameAddress}`);
+              router.push(`/settings?game=${gameAddress}`);
             }}
             className="w-full rounded-lg border border-purple-700/40 px-3 py-1.5 text-xs font-medium text-purple-400 transition hover:bg-purple-950/40 hover:border-purple-600/60"
           >
