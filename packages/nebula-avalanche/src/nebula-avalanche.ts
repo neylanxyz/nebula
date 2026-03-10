@@ -23,6 +23,8 @@ import { fetchDeposits } from './contract/events.js';
 export interface NebulaAvalancheConfig extends Partial<NebulaConfig> {
   rpcUrl: string;
   verifierAddress?: Address;
+  /** URL of the Ponder indexer. When set, deposits are fetched from the indexer instead of scanning on-chain logs (avoids eth_getLogs rate limits). */
+  indexerUrl?: string;
 }
 
 /**
@@ -45,11 +47,13 @@ export class NebulaAvalanche {
   private rpcUrl: string;
   private contractAddress: Address;
   private startBlock: bigint;
+  private indexerUrl?: string;
 
   constructor(config: NebulaAvalancheConfig) {
     this.rpcUrl = config.rpcUrl;
     this.contractAddress = config.contractAddress ?? NEBULA_CONTRACT_ADDRESS;
     this.startBlock = config.startBlock ?? NEBULA_START_BLOCK;
+    this.indexerUrl = config.indexerUrl;
     const verifierAddress = config.verifierAddress ?? VERIFIER_CONTRACT_ADDRESS;
     this.reader = new NebulaAvalancheReader(this.rpcUrl, this.contractAddress, verifierAddress);
     this.writer = new NebulaAvalancheWriter(this.rpcUrl, this.contractAddress);
@@ -114,6 +118,7 @@ export class NebulaAvalanche {
         startBlock: this.startBlock,
         onProgress: options?.onFetchProgress,
         signal: options?.signal,
+        indexerUrl: this.indexerUrl,
       },
     );
 

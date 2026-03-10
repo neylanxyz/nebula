@@ -1,7 +1,11 @@
 import type { Address } from "viem";
 
-/** Default contract address for NebulaPrivatePool on Avalanche Fuji */
+/** Nebula PrivatePool contract address on Avalanche Fuji */
 export const NEBULA_CONTRACT_ADDRESS: Address =
+  "0x254d1290a8f977dc2babbbf979cc86a7ac4a83ca";
+
+/** Game contract address on Avalanche Fuji (calls NebulaPrivatePool internally) */
+export const GAME_CONTRACT_ADDRESS: Address =
   "0x8e14F2620532F8908514283311a7742194192A69";
 
 /** Verifier contract address on Avalanche Fuji */
@@ -14,8 +18,8 @@ export const AVALANCHE_FUJI_CHAIN_ID = 43113;
 /** Merkle tree depth used by the privacy pool circuit */
 export const TREE_DEPTH = 20;
 
-/** Block at which the contract was deployed (Avalanche Fuji) */
-export const NEBULA_START_BLOCK = 52428383n;
+/** Block at which the Nebula Pool contract was deployed (Avalanche Fuji) */
+export const NEBULA_START_BLOCK = 52499039n;
 
 /** Number of blocks to fetch per batch when scanning events */
 export const BLOCK_BATCH_SIZE = 5000;

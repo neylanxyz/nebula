@@ -34,6 +34,7 @@ export function useWithdrawPrize() {
 
       const nebula = new NebulaAvalanche({
         rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
+        indexerUrl: process.env.NEXT_PUBLIC_INDEXER_URL ?? 'http://localhost:42069',
       });
 
       setStatus('Fetching deposits and building Merkle tree...');
